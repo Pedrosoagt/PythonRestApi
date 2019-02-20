@@ -12,43 +12,10 @@ import imp
 helper_module = imp.load_source('*', './app/helpers.py')
 
 # Select the database
-db = client.development
+db = client['DEV']
 # Select the collection
-collection = db.pads
-
-@app.route("/pads", methods=['POST'])
-def create_pad():
-    """
-       Function to create new pads.
-       """
-    try:
-        # Create new pads
-        try:
-            body = ast.literal_eval(json.dumps(request.get_json()))
-        except:
-            # Bad request as request body is not available
-            # Add message for debugging purpose
-            return "", 400
-
-        record_created = collection.insert(body)
-
-        # Prepare the response
-        if isinstance(record_created, list):
-            # Return list of Id of the newly created item
-            return jsonify([str(v) for v in record_created]), 201
-        else:
-            # Return Id of the newly created item
-            return jsonify(str(record_created)), 201
-    except:
-        # Error while trying to create the resource
-        # Add message for debugging purpose
-        return "", 500
+collection = db['SPIA']
         
-""""
-TODO
-@app.route("/pads/<xml_path>", methods=['GET'])
-"""
-
 @app.route("/pads", methods=['GET'])
 def fetch_pads():
     """
@@ -72,7 +39,7 @@ def fetch_pads():
                 return dumps(records_fetched)
             else:
                 # No records are found
-                return "", 404
+                return "Records not found", 404
 
         # If dictionary is empty
         else:
@@ -88,60 +55,29 @@ def fetch_pads():
         # Add message for debugging purpose
         return "", 500
 
-@app.route("/pads/<pad_id>", methods=['POST'])
-def update_pad(pad_id):
+@app.route("/pads/<xml_path>", methods=['GET'])
+def fetch_pads_by_xml_path(xml_path):
     """
-       Function to update the pad.
-       """
-    try:
-        # Get the value which needs to be updated
-        try:
-            body = ast.literal_eval(json.dumps(request.get_json()))
-        except:
-            # Bad request as the request body is not available
-            # Add message for debugging purpose
-            return "", 400
-
-        # Updating the pad
-        records_updated = collection.update_one({"id": int(pad_id)}, body)
-
-        # Check if resource is updated
-        if records_updated.modified_count > 0:
-            # Prepare the response as resource is updated successfully
-            return "", 200
-        else:
-            # Bad request as the resource is not available to update
-            # Add message for debugging purpose
-            return "", 404
-    except:
-        # Error while trying to update the resource
-        # Add message for debugging purpose
-        return "", 500
-
-@app.route("/pads/<pad_id>", methods=['DELETE'])
-def remove_pad(pad_id):
+        Function to fetch the pads from a given xml
     """
-       Function to remove the pad.
-    """
-    try:
-        # Delete the pad
-        delete_pad = collection.delete_one({"id": int(pad_id)})
+    collection = [collection for col in collection if collection['name'] == xml_path]
+    if collection.find().count > 0:
+        return dumps(collection.find())
+    else:
+        abort(404)
 
-        if delete_pad.deleted_count > 0 :
-            # Prepare the response
-            return "", 204
-        else:
-            # Resource Not found
-            return "", 404
-    except:
-        # Error while trying to delete the resource
-        # Add message for debugging purpose
-        return "", 500
+@app.route("/pads/<sort>", methods=['GET'])
+def fetch_sorted_pads(sort):
+    """
+        Function to fetch the sorted pads
+    """
+    padsList =  fetch_pads()
+    return padsList.sort(reverse = True)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    """Send message to the pad with notFound 404 status."""
-    # Message to the pad
+    """Send message to the user with notFound 404 status."""
+    # Message to the user
     message = {
         "err":
             {

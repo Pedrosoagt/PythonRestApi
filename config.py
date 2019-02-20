@@ -2,6 +2,6 @@
 
 from pymongo import MongoClient
 
-DATABASE = MongoClient()['development'] # DB_NAME
+DATABASE = MongoClient()['DEV'] # DB_NAME
 DEBUG = True
-client = MongoClient('localhost', 27017)
+client = MongoClient('localhost')

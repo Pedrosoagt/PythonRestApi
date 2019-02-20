@@ -11,25 +11,26 @@ xmlSource='/samba/anonymous_share/spi/SMTB/SPIB'
 #xmlSourc='/home/venturus/downloads/test'
 xmlTarget='/samba/anonumous_share/spi/SMTB/SPIB/proc'
 
-def setQuotient(value, limit):
-    return limit/value
+def setQuotient(value, target):
+    return value/target
 
-def padNormalized(read, min, max):
-    return (read - min)/(max - min)
+def padNormalized(read, minValue, maxValue):
+    return (read - minValue)/(maxValue - minValue)
     
 def getBsonHeight(featureResultNode):
     heightNode = featureResultNode.find('Height')
     value = heightNode.attrib['Value'].strip()
+    target = heightNode.attrib['Target'].strip()
     maxValue = heightNode.attrib['UpFail'].strip()
     minValue = heightNode.attrib['LowFail'].strip()
     height = {
-            'Status' : heightNode.attrib['Status'].strip(),
-             'Value' : heightNode.attrib['Value'].strip(),
-            'UpFail' : heightNode.attrib['UpFail'].strip(),
-            'Target' : heightNode['Target'].strip(),
-           'LowFail' : heightNode['LowFail'].strip(),
-          'Quotient' : setQuotient(value, maxValue),
-        'Normalized' : padNormalized(value, minValue, maxValue)
+                  'Status' : heightNode.attrib['Status'].strip(),
+                   'Value' : heightNode.attrib['Value'].strip(),
+                  'UpFail' : heightNode.attrib['UpFail'].strip(),
+                  'Target' : heightNode['Target'].strip(),
+                 'LowFail' : heightNode['LowFail'].strip(),
+          'HeightQuotient' : setQuotient(value, target),
+        'HeightNormalized' : padNormalized(value, minValue, maxValue)
     }
 
     return height
@@ -37,16 +38,17 @@ def getBsonHeight(featureResultNode):
 def getBsonArea(featureResultNode):
     areaNode = featureResultNode.find('Area')
     value = areaNode.attrib['Value'].strip()
+    target = areaNode.attrib['Target'].strip()
     maxValue = areaNode.attrib['UpFail'].strip()
     minValue = areaNode.attrib['LowFail'].strip()
     area = {
-            'Status' : areaNode.attrib['Status'].strip(),
-             'Value' : areaNode.attrib['Value'].strip(),
-            'UpFail' : areaNode.attrib['UpFail'].strip(),
-            'Target' : areaNode.attrib['Target'].strip(),
-           'LowFail' : areaNode.attrib['LowFail'].strip(),
-          'Quotient' : setQuotient(value, maxValue),
-        'Normalized' : padNormalized(value, minValue, maxValue)
+                'Status' : areaNode.attrib['Status'].strip(),
+                 'Value' : areaNode.attrib['Value'].strip(),
+                'UpFail' : areaNode.attrib['UpFail'].strip(),
+                'Target' : areaNode.attrib['Target'].strip(),
+               'LowFail' : areaNode.attrib['LowFail'].strip(),
+          'AreaQuotient' : setQuotient(value, target),
+        'AreaNormalized' : padNormalized(value, minValue, maxValue)
     }
 
     return area
@@ -54,16 +56,17 @@ def getBsonArea(featureResultNode):
 def getBsonVolume(featureResultNode):
     volumeNode = featureResultNode.find('Volume')
     value = volumeNode.attrib['Value'].strip()
+    target = volumeNode.attrib['Target'].strip()
     maxValue = volumeNode.attrib['UpFail'].strip()
     minValue = volumeNode.attrib['LowFail'].strip()
     volume = {
-            'Status' : volumeNode.attrib['Status'].strip(),
-             'Value' : volumeNode.attrib['Value'].strip(),
-            'UpFail' : volumeNode.attrib['UpFail'].strip(),
-            'Target' : volumeNode.attrib['Target'].strip(),
-           'LowFail' : volumeNode.attrib['LowFail'].strip(),
-          'Quotient' : setQuotient(value, maxValue),
-        'Normalized' : padNormalized(value, minValue, maxValue)
+                  'Status' : volumeNode.attrib['Status'].strip(),
+                   'Value' : volumeNode.attrib['Value'].strip(),
+                  'UpFail' : volumeNode.attrib['UpFail'].strip(),
+                  'Target' : volumeNode.attrib['Target'].strip(),
+                 'LowFail' : volumeNode.attrib['LowFail'].strip(),
+          'VolumeQuotient' : setQuotient(value, target),
+        'VolumeNormalized' : padNormalized(value, minValue, maxValue)
     }
 
     return volume
