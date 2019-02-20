@@ -3,10 +3,10 @@ from pymongo import MongoClient
 client = MongoClient('localhost')
 db = client['SMTB']
 SPIA_db = db['SPIA']
-SPIA_db_new = db['SPIA-new']
+SPIA_db_new = db['SPIA-new4']
 
 SPIB_db = db['SPIB']
-SPIB_db_new = db['SPIB-new']
+SPIB_db_new = db['SPIB-new4']
 
 print("Number of documents from SPIA: ", db['SPIA'].count_documents({}))
 print("Number of documents from SPIB: ", db['SPIB'].count_documents({}))
