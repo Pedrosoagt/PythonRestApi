@@ -60,19 +60,26 @@ def fetch_pads_by_xml_path(xml_path):
     """
         Function to fetch the pads from a given xml
     """
-    collection = [collection for col in collection if collection['name'] == xml_path]
-    if collection.find().count > 0:
-        return dumps(collection.find())
-    else:
-        abort(404)
+    try: 
+        collection = [collection for col in collection if collection['name'] == xml_path]
+        if collection.find().count > 0:
+            return dumps(collection.find())
+        else:
+            return "Not records found", 404
+    except:
+        return "", 500
 
 @app.route("/pads/<sort>", methods=['GET'])
 def fetch_sorted_pads(sort):
     """
         Function to fetch the sorted pads
     """
-    padsList =  fetch_pads()
-    return padsList.sort(reverse = True)
+    try :
+
+        padsList =  fetch_pads()
+        return padsList.sort(reverse = True)
+    except:
+        return "", 500
 
 @app.errorhandler(404)
 def page_not_found(e):

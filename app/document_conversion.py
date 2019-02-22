@@ -28,10 +28,10 @@ def check_status(list_result):
         return 'P'
 
 def setQuotient(value, target):
-    return value/target
+    return float(value)/float(target)
 
-def padNormalized(value, low=0, up)
-    return (valeu - low) / ( up - low)
+def padNormalized(value, low=0, up=0):
+    return (float(value) - float(low)) / ( float(up) - float(low))
 
 def get_feat(result):
     ft = {}
@@ -52,7 +52,7 @@ def get_feat_pct(feat_result, pct):
     feat_pct['Status'] = check_fail(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
     feat_pct['Value'] = feat_result['{0}Pct'.format(pct)]
     feat_pct['Limit'] = feat_result['{0}PctLimit'.format(pct)]
-    feat_pct['Quotiente'] = setQuotient(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
+    feat_pct['Quotient'] = setQuotient(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
     feat_pct['Normalized'] = padNormalized(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
     
     return feat_pct
