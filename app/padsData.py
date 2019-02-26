@@ -15,7 +15,166 @@ helper_module = imp.load_source('*', './app/helpers.py')
 db = client['DEV']
 # Select the collection
 collection = db['SPIA']
-        
+
+top_five = {
+	"TopFive0": [{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 4,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 5,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 6,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 5.2,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 5.7,
+			"minValue": 1
+		}
+	],
+	"TopFive1": [{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 3,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 3,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 5,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 4,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 5,
+			"minValue": 1
+		}
+	],
+	"TopFive2": [{
+			"value": 3,
+			"target": 2,
+			"maxValue": 4,
+			"minValue": 1
+		},
+		{
+			"value": 3,
+			"target": 2,
+			"maxValue": 5,
+			"minValue": 1
+		},
+		{
+			"value": 3,
+			"target": 2,
+			"maxValue": 6,
+			"minValue": 1
+		},
+		{
+			"value": 3,
+			"target": 2,
+			"maxValue": 5.2,
+			"minValue": 1
+		},
+		{
+			"value": 3,
+			"target": 2,
+			"maxValue": 5.7,
+			"minValue": 1
+		}
+	],
+	"TopFive3": [{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 4,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 5,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 6,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 5.2,
+			"minValue": 1
+		},
+		{
+			"value": 5,
+			"target": 2.5,
+			"maxValue": 5.7,
+			"minValue": 1
+		}
+	],
+	"TopFive4": [{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 4,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 5,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 6,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 3,
+			"minValue": 1
+		},
+		{
+			"value": 4,
+			"target": 2.5,
+			"maxValue": 5,
+			"minValue": 1
+		}
+	]
+}
+
+
 @app.route("/pads", methods=['GET'])
 def fetch_pads():
     """
@@ -61,25 +220,37 @@ def fetch_pads_by_xml_path(xml_path):
         Function to fetch the pads from a given xml
     """
     try: 
-        collection = [collection for col in collection if collection['name'] == xml_path]
-        if collection.find().count > 0:
-            return dumps(collection.find())
+        if (request.args.get):
+            fetch_sorted_pads()
         else:
-            return "Not records found", 404
+            collection = [collection for col in collection if collection['name'] == xml_path]
+            if collection.find().count > 0:
+                return dumps(collection.find())
+            else:
+                return "Not records found", 404
     except:
         return "", 500
 
-@app.route("/pads/<sort>", methods=['GET'])
-def fetch_sorted_pads(sort):
+@app.route("/pads/ze", methods=['GET'])
+def fetch_top_five_pads():
+    """
+        Function to Ze test
+    """
+    try:
+        return jsonify(top_five)
+    except:
+        return "Now you can't see", 500
+
+@app.route("/pads/sort", methods=['GET'])
+def fetch_sorted_pads():
     """
         Function to fetch the sorted pads
     """
-    try :
-
-        padsList =  fetch_pads()
-        return padsList.sort(reverse = True)
+    try:
+        padsList =  this.fetch_pads()
+        return "list", padsList.sort(reverse = True)
     except:
-        return "", 500
+        return "NOOOoo", 500
 
 @app.errorhandler(404)
 def page_not_found(e):
