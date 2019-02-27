@@ -1,15 +1,16 @@
 from pymongo import MongoClient
 
 client = MongoClient('localhost')
-db = client['SMTB']
+db = client['DEV']
 SPIA_db = db['SPIA']
-SPIA_db_new = db['SPIA-new4']
+test = db['SPIA_test']
+# SPIA_db_new = db['SPIA_new4']
 
-SPIB_db = db['SPIB']
-SPIB_db_new = db['SPIB-new4']
+# SPIB_db = db['SPIB']
+# SPIB_db_new = db['SPIB-new4']
 
 print("Number of documents from SPIA: ", db['SPIA'].count_documents({}))
-print("Number of documents from SPIB: ", db['SPIB'].count_documents({}))
+# print("Number of documents from SPIB: ", db['SPIB'].count({}))
 
 print("\n*****\n")
 
@@ -28,10 +29,10 @@ def check_status(list_result):
         return 'P'
 
 def setQuotient(value, target):
-    return value/target
+    return float(value)/float(target)
 
-def padNormalized(value, low=0, up)
-    return (valeu - low) / ( up - low)
+def padNormalized(value, low=1, up=1):
+    return (float(value) - float(low) )/ ( float(up) - float(low))
 
 def get_feat(result):
     ft = {}
@@ -52,13 +53,13 @@ def get_feat_pct(feat_result, pct):
     feat_pct['Status'] = check_fail(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
     feat_pct['Value'] = feat_result['{0}Pct'.format(pct)]
     feat_pct['Limit'] = feat_result['{0}PctLimit'.format(pct)]
-    feat_pct['Quotiente'] = setQuotient(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
+    feat_pct['Quotient'] = setQuotient(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
     feat_pct['Normalized'] = padNormalized(feat_result['{0}Pct'.format(pct)], feat_result['{0}PctLimit'.format(pct)])
     
     return feat_pct
 
 def transform_data(spidb):
-    new_docs_list = []
+    # new_docs_list = []
     count = 0
 
     for doc in spidb.find():
@@ -66,6 +67,7 @@ def transform_data(spidb):
         # print('Starting new doc!')
         new_doc['_id'] = doc['_id']
         new_doc['Datetime'] = doc['Panel']['StartTime']
+        new_doc['TestTime'] = doc['Panel']['TestTime']
         new_doc['Status_XML'] = doc['Panel']['Status']
         new_doc['Name'] = doc['Panel']['Name']
         new_doc['Type'] = doc['Panel']['SRFFName']
@@ -98,9 +100,9 @@ def transform_data(spidb):
                     pad_info['ComponentId'] = loc_id
                     pad_info['Part'] = loc_part
                     pad_info['Package'] = loc_package
-                    pad_info['ComponentName'] = loc_name+"_"+img_count
+                    pad_info['ComponentName'] = loc_name+"_"+str(img_count)
                     pad_info['ImageCount'] = img_count
-
+                     
                     pad_info['Status'] = check_status([pad_info['Height']['Status'],\
                                                 pad_info['Area']['Status'], \
                                                 pad_info['Volume']['Status'], \
@@ -116,28 +118,29 @@ def transform_data(spidb):
         new_doc['Pad'] = pads_dict
 
         count += 1
-
-        # if count % 100 == 0:
-        #     print('New doc created: ', count) 
-
-        new_docs_list.append(new_doc)
-
-    return new_docs_list
+        
+        if count % 100 == 0:
+            print('New doc created: ', count) 
+        
+        # new_docs_list.append(new_doc)
+        test.insert_one(new_doc)
+    return count
 
 print("Begin transformation for SPIA:")
 spia_result = transform_data(SPIA_db)
+print("Number of insertions: ", spia_result)
 
 print("")
 
-print("Begin transformation for SPIB:")
-spib_result = transform_data(SPIB_db)
+# print("Begin transformation for SPIB:")
+# spib_result = transform_data(SPIB_db)
 
-print("\n*****\n")
+# print("\n*****\n")
 
-print("Insert SPIA reults to MongoDB:")
-SPIA_db_new.insert_many(spia_result)
+# print("Insert SPIA reults to MongoDB:")
+# SPIA_db_new.insert_many(spia_result)
 
-print("")
+# print("")
 
-print("Insert SPIB reults to MongoDB:")
-SPIB_db_new.insert_many(spib_result)
+# print("Insert SPIB reults to MongoDB:")
+# SPIB_db_new.insert_many(spib_result)

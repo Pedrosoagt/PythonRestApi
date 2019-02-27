@@ -14,14 +14,16 @@ helper_module = imp.load_source('*', './app/helpers.py')
 # Select the database
 db = client['DEV']
 # Select the collection
-collection = db['SPIA']
-        
+collection = db['SPIA_new']
+
 @app.route("/pads", methods=['GET'])
 def fetch_pads():
     """
        Function to fetch the pads.
     """
     try:
+        db = client['DEV']
+        collection = db['SPIA_new']
         # Call the function to get the query params
         query_params = helper_module.parse_query_params(request.query_string)
         # Check if dictionary is not empty
@@ -55,24 +57,31 @@ def fetch_pads():
         # Add message for debugging purpose
         return "", 500
 
-@app.route("/pads/<xml_path>", methods=['GET'])
-def fetch_pads_by_xml_path(xml_path):
-    """
-        Function to fetch the pads from a given xml
-    """
-    collection = [collection for col in collection if collection['name'] == xml_path]
-    if collection.find().count > 0:
-        return dumps(collection.find())
-    else:
-        abort(404)
+# @app.route("/pads/<xml_path>", methods=['GET'])
+# def fetch_pads_by_xml_path(xml_path):
+#     """
+#         Function to fetch the pads from a given xml
+#     """
+#     collection = [collection for col in collection if collection['name'] == xml_path]
+#     if collection.find().count > 0:
+#         return dumps(collection.find())
+#     else:
+#         abort(404)
 
-@app.route("/pads/<sort>", methods=['GET'])
-def fetch_sorted_pads(sort):
-    """
-        Function to fetch the sorted pads
-    """
-    padsList =  fetch_pads()
-    return padsList.sort(reverse = True)
+# @app.route("/pads/<sort>", methods=['GET'])
+# def fetch_sorted_pads(sort):
+#     """
+#         Function to fetch the sorted pads
+#     """
+#     padsList =  fetch_pads()
+#     return padsList.sort(reverse = True)
+
+@app.route("/pads/ze", methods=['GET'])
+def fetch_top_five_pads():
+    try:
+        return jsonify(top_five)
+    except:
+        return "", 404
 
 @app.errorhandler(404)
 def page_not_found(e):

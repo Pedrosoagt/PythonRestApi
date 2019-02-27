@@ -2,8 +2,8 @@ from pymongo import MongoClient
 
 client = MongoClient('localhost')
 
-db = client['SMTB']
-collect = db['SPIA-new3']
+db = client['DEV']
+collect = db['SPIB_new']
 
 id_list = []
 id_list = collect.distinct('_id')
